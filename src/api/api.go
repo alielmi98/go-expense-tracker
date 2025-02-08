@@ -5,9 +5,11 @@ import (
 	"log"
 
 	"github.com/alielmi98/golang-expense-tracker-api/api/middlewares"
+	"github.com/alielmi98/golang-expense-tracker-api/api/routers"
 	"github.com/alielmi98/golang-expense-tracker-api/config"
 	"github.com/alielmi98/golang-expense-tracker-api/constants"
 	"github.com/alielmi98/golang-expense-tracker-api/docs"
+
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -25,7 +27,17 @@ func InitServer(cfg *config.Config) {
 
 func RegisterRoutes(r *gin.Engine, cfg *config.Config) {
 
-	// Routers
+	api := r.Group("/api")
+
+	v1 := api.Group("/v1")
+	{
+		//User
+		users := v1.Group("/users")
+		tokens := v1.Group("/tokens")
+		routers.User(users, cfg)
+		routers.Token(tokens, cfg)
+
+	}
 
 }
 func RegisterSwagger(r *gin.Engine, cfg *config.Config) {
