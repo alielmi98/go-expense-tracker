@@ -11,6 +11,12 @@ type CreateExpenseRequest struct {
 	Date     time.Time `json:"date"`
 }
 
+type UpdateExpenseRequest struct {
+	Title    string    `json:"title"`
+	Amount   float64   `json:"amount"`
+	Category string    `json:"category"`
+	Date     time.Time `json:"date"`
+}
 type ExpenseResponse struct {
 	Id       int       `json:"id"`
 	Title    string    `json:"title"`

@@ -13,6 +13,7 @@ import (
 
 type ExpenseTrackerRepository interface {
 	CreateExpense(ctx context.Context, model *models.Expense) error
+	UpdateExpense(ctx context.Context, id int, model *models.Expense) error
 }
 
 type expenseTrackerRepository struct {
@@ -33,6 +34,21 @@ func (r *expenseTrackerRepository) CreateExpense(ctx context.Context, model *mod
 	if err != nil {
 		tx.Rollback()
 		log.Printf("Caller:%s Level:%s Msg:%s ", constants.Postgres, constants.Insert, err.Error())
+		return err
+	}
+	tx.Commit()
+
+	return nil
+}
+
+func (r *expenseTrackerRepository) UpdateExpense(ctx context.Context, id int, model *models.Expense) error {
+	tx := r.db.WithContext(ctx).Begin()
+	if err := tx.Model(model).
+		Where("id = ? ", id).
+		Updates(model).
+		Error; err != nil {
+		tx.Rollback()
+		log.Printf("Caller:%s Level:%s Msg:%s ", constants.Postgres, constants.Update, err.Error())
 		return err
 	}
 	tx.Commit()

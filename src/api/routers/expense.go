@@ -9,5 +9,6 @@ import (
 func Expense(router *gin.RouterGroup, cfg *config.Config) {
 	h := handlers.NewExpenseTrackerHandler()
 	router.POST("/", h.CreateExpense)
+	router.PUT("/:id", h.UpdateExpense)
 
 }

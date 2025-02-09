@@ -12,6 +12,7 @@ import (
 
 type ExpenseTrackerService interface {
 	CreateExpense(ctx context.Context, expense *dto.CreateExpenseRequest) (*dto.ExpenseResponse, error)
+	UpdateExpense(ctx context.Context, id int, expense *dto.UpdateExpenseRequest) (*dto.ExpenseResponse, error)
 }
 
 type expenseTrackerService struct {
@@ -44,4 +45,23 @@ func (s *expenseTrackerService) CreateExpense(ctx context.Context, expense *dto.
 	}
 
 	return response, err
+}
+
+func (s *expenseTrackerService) UpdateExpense(ctx context.Context, id int, expense *dto.UpdateExpenseRequest) (*dto.ExpenseResponse, error) {
+	model, err := common.TypeConverter[models.Expense](expense)
+	if err != nil {
+		return &dto.ExpenseResponse{}, err
+	}
+
+	err = s.repo.UpdateExpense(ctx, id, model)
+	if err != nil {
+		return &dto.ExpenseResponse{}, err
+	}
+
+	response, err := common.TypeConverter[dto.ExpenseResponse](model)
+	if err != nil {
+		return &dto.ExpenseResponse{}, err
+	}
+	return response, err
+
 }

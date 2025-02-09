@@ -55,6 +55,17 @@ definitions:
     - password
     - username
     type: object
+  github_com_alielmi98_golang-expense-tracker-api_api_dto.UpdateExpenseRequest:
+    properties:
+      amount:
+        type: number
+      category:
+        type: string
+      date:
+        type: string
+      title:
+        type: string
+    type: object
   github_com_alielmi98_golang-expense-tracker-api_api_helper.BaseHttpResponse:
     properties:
       error: {}
@@ -120,6 +131,42 @@ paths:
       security:
       - AuthBearer: []
       summary: Create a Expense
+      tags:
+      - Expenses
+  /v1/expense/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update a Expense by Id
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update a Expense
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_dto.UpdateExpenseRequest'
+      responses:
+        "201":
+          description: Expense response
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_helper.BaseHttpResponse'
+            - properties:
+                result:
+                  $ref: '#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_dto.ExpenseResponse'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_helper.BaseHttpResponse'
+      security:
+      - AuthBearer: []
+      summary: Update a Expense
       tags:
       - Expenses
   /v1/tokens/refresh-token:
