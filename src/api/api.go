@@ -31,18 +31,22 @@ func RegisterRoutes(r *gin.Engine, cfg *config.Config) {
 
 	v1 := api.Group("/v1")
 	{
-		//User
+		// User
 		users := v1.Group("/users")
 		tokens := v1.Group("/tokens")
 		routers.User(users, cfg)
 		routers.Token(tokens, cfg)
+
+		// Expense
+		expenses := v1.Group("/expense")
+		routers.Expense(expenses, cfg)
 
 	}
 
 }
 func RegisterSwagger(r *gin.Engine, cfg *config.Config) {
 	docs.SwaggerInfo.Title = "golang web api"
-	docs.SwaggerInfo.Description = "golang todo list api documentation"
+	docs.SwaggerInfo.Description = "golang Expense Tracker  api documentation"
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.BasePath = "/api"
 	docs.SwaggerInfo.Host = fmt.Sprintf("localhost:%s", cfg.Server.InternalPort)

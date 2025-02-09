@@ -1,4 +1,33 @@
 definitions:
+  github_com_alielmi98_golang-expense-tracker-api_api_dto.CreateExpenseRequest:
+    properties:
+      amount:
+        type: number
+      category:
+        type: string
+      date:
+        type: string
+      title:
+        type: string
+    required:
+    - amount
+    - title
+    type: object
+  github_com_alielmi98_golang-expense-tracker-api_api_dto.ExpenseResponse:
+    properties:
+      amount:
+        type: number
+      category:
+        type: string
+      date:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      userId:
+        type: integer
+    type: object
   github_com_alielmi98_golang-expense-tracker-api_api_dto.LoginByUsernameRequest:
     properties:
       password:
@@ -62,6 +91,37 @@ definitions:
 info:
   contact: {}
 paths:
+  /v1/expense/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new Expense
+      parameters:
+      - description: Create a Expense
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_dto.CreateExpenseRequest'
+      responses:
+        "201":
+          description: Expense response
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_helper.BaseHttpResponse'
+            - properties:
+                result:
+                  $ref: '#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_dto.ExpenseResponse'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_helper.BaseHttpResponse'
+      security:
+      - AuthBearer: []
+      summary: Create a Expense
+      tags:
+      - Expenses
   /v1/tokens/refresh-token:
     post:
       consumes:
