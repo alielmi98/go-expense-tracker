@@ -61,8 +61,8 @@ func (s *expenseTrackerService) UpdateExpense(ctx context.Context, id int, expen
 	if err != nil {
 		return &dto.ExpenseResponse{}, err
 	}
-
-	response, err := common.TypeConverter[dto.ExpenseResponse](model)
+	updatedModel, _ := s.repo.GetExpenseByID(ctx, id)
+	response, err := common.TypeConverter[dto.ExpenseResponse](updatedModel)
 	if err != nil {
 		return &dto.ExpenseResponse{}, err
 	}
