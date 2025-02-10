@@ -70,6 +70,56 @@ const docTemplate = `{
             }
         },
         "/v1/expense/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AuthBearer": []
+                    }
+                ],
+                "description": "Get a Expense by Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Expenses"
+                ],
+                "summary": "Get a Expense",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Expense response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_helper.BaseHttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "result": {
+                                            "$ref": "#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_dto.ExpenseResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_helper.BaseHttpResponse"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -119,6 +169,44 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_helper.BaseHttpResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AuthBearer": []
+                    }
+                ],
+                "description": "Delete a Expense by Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Expenses"
+                ],
+                "summary": "Delete a Expense",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_helper.BaseHttpResponse"
                         }
                     },
                     "400": {

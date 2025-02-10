@@ -14,6 +14,8 @@ import (
 type ExpenseTrackerRepository interface {
 	CreateExpense(ctx context.Context, model *models.Expense) error
 	UpdateExpense(ctx context.Context, id int, model *models.Expense) error
+	DeleteExpense(ctx context.Context, id int) error
+	GetExpenseByID(ctx context.Context, id int) (*models.Expense, error)
 }
 
 type expenseTrackerRepository struct {
@@ -54,4 +56,27 @@ func (r *expenseTrackerRepository) UpdateExpense(ctx context.Context, id int, mo
 	tx.Commit()
 
 	return nil
+}
+
+func (r *expenseTrackerRepository) DeleteExpense(ctx context.Context, id int) error {
+	tx := r.db.WithContext(ctx).Begin()
+
+	model := new(models.Expense)
+	if err := tx.Where("id = ?", id).Delete(model).Error; err != nil {
+		tx.Rollback()
+		log.Printf("Caller:%s Level:%s Msg:%s ", constants.Postgres, constants.Delete, err.Error())
+		return err
+	}
+	tx.Commit()
+
+	return nil
+}
+
+func (r *expenseTrackerRepository) GetExpenseByID(ctx context.Context, id int) (*models.Expense, error) {
+	var expense models.Expense
+	if err := r.db.WithContext(ctx).First(&expense, id).Error; err != nil {
+		log.Printf("Caller:%s Level:%s Msg:%s ", constants.Postgres, constants.Select, err.Error())
+		return nil, err
+	}
+	return &expense, nil
 }

@@ -78,3 +78,49 @@ func (h *expenseTrackerHandler) UpdateExpense(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, helper.GenerateBaseResponse(response, true, 0))
 }
+
+// DeleteExpense godoc
+// @Summary Delete a Expense
+// @Description Delete a Expense by Id
+// @Tags Expenses
+// @Accept json
+// @produces json
+// @Param id path int true "Id"
+// @Success 204 {object} helper.BaseHttpResponse "No content"
+// @Failure 400 {object} helper.BaseHttpResponse "Bad request"
+// @Router /v1/expense/{id} [delete]
+// @Security AuthBearer
+func (h *expenseTrackerHandler) DeleteExpense(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Params.ByName("id"))
+
+	err := h.expenseService.DeleteExpense(c, id)
+	if err != nil {
+		c.AbortWithStatusJSON(helper.TranslateErrorToStatusCode(err),
+			helper.GenerateBaseResponseWithError(nil, false, helper.InternalError, err))
+		return
+	}
+	c.JSON(http.StatusNoContent, helper.GenerateBaseResponse(nil, true, 0))
+}
+
+// GetExpenseByID godoc
+// @Summary Get a Expense
+// @Description Get a Expense by Id
+// @Tags Expenses
+// @Accept json
+// @produces json
+// @Param id path int true "Id"
+// @Success 200 {object} helper.BaseHttpResponse{result=dto.ExpenseResponse} "Expense response"
+// @Failure 400 {object} helper.BaseHttpResponse "Bad request"
+// @Router /v1/expense/{id} [get]
+// @Security AuthBearer
+func (h *expenseTrackerHandler) GetExpenseByID(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Params.ByName("id"))
+
+	response, err := h.expenseService.GetExpenseByID(c, id)
+	if err != nil {
+		c.AbortWithStatusJSON(helper.TranslateErrorToStatusCode(err),
+			helper.GenerateBaseResponseWithError(nil, false, helper.InternalError, err))
+		return
+	}
+	c.JSON(http.StatusOK, helper.GenerateBaseResponse(response, true, 0))
+}

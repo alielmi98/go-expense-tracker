@@ -10,5 +10,7 @@ func Expense(router *gin.RouterGroup, cfg *config.Config) {
 	h := handlers.NewExpenseTrackerHandler()
 	router.POST("/", h.CreateExpense)
 	router.PUT("/:id", h.UpdateExpense)
+	router.DELETE("/:id", h.DeleteExpense)
+	router.GET("/:id", h.GetExpenseByID)
 
 }
