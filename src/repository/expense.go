@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/alielmi98/golang-expense-tracker-api/constants"
 	"github.com/alielmi98/golang-expense-tracker-api/data/db"
@@ -16,6 +17,7 @@ type ExpenseTrackerRepository interface {
 	UpdateExpense(ctx context.Context, id int, model *models.Expense) error
 	DeleteExpense(ctx context.Context, id int) error
 	GetExpenseByID(ctx context.Context, id int) (*models.Expense, error)
+	ListExpenses(ctx context.Context, startDate, endDate time.Time) ([]models.Expense, error) // Add this line
 }
 
 type expenseTrackerRepository struct {
@@ -79,4 +81,13 @@ func (r *expenseTrackerRepository) GetExpenseByID(ctx context.Context, id int) (
 		return nil, err
 	}
 	return &expense, nil
+}
+
+func (r *expenseTrackerRepository) ListExpenses(ctx context.Context, startDate, endDate time.Time) ([]models.Expense, error) {
+	var expenses []models.Expense
+	if err := r.db.WithContext(ctx).Where("date BETWEEN ? AND ?", startDate, endDate).Find(&expenses).Error; err != nil {
+		log.Printf("Caller:%s Level:%s Msg:%s ", constants.Postgres, constants.Select, err.Error())
+		return nil, err
+	}
+	return expenses, nil
 }

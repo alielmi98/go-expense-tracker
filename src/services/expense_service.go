@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"time"
 
 	"github.com/alielmi98/golang-expense-tracker-api/api/dto"
 	"github.com/alielmi98/golang-expense-tracker-api/common"
@@ -15,6 +16,7 @@ type ExpenseTrackerService interface {
 	UpdateExpense(ctx context.Context, id int, expense *dto.UpdateExpenseRequest) (*dto.ExpenseResponse, error)
 	DeleteExpense(ctx context.Context, id int) error
 	GetExpenseByID(ctx context.Context, id int) (*dto.ExpenseResponse, error)
+	ListExpenses(ctx context.Context, startDate, endDate time.Time) ([]dto.ExpenseResponse, error)
 }
 
 type expenseTrackerService struct {
@@ -86,4 +88,21 @@ func (s *expenseTrackerService) GetExpenseByID(ctx context.Context, id int) (*dt
 		return &dto.ExpenseResponse{}, err
 	}
 	return response, nil
+}
+
+func (s *expenseTrackerService) ListExpenses(ctx context.Context, startDate, endDate time.Time) ([]dto.ExpenseResponse, error) {
+	models, err := s.repo.ListExpenses(ctx, startDate, endDate)
+	if err != nil {
+		return nil, err
+	}
+
+	var responses []dto.ExpenseResponse
+	for _, model := range models {
+		response, err := common.TypeConverter[dto.ExpenseResponse](model)
+		if err != nil {
+			return nil, err
+		}
+		responses = append(responses, *response)
+	}
+	return responses, nil
 }

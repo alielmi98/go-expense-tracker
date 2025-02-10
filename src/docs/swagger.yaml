@@ -103,6 +103,44 @@ info:
   contact: {}
 paths:
   /v1/expense/:
+    get:
+      consumes:
+      - application/json
+      description: List and filter expenses
+      parameters:
+      - description: Filter (past_week, past_month, last_3_months)
+        in: query
+        name: filter
+        type: string
+      - description: Start Date (YYYY-MM-DD)
+        in: query
+        name: startDate
+        type: string
+      - description: End Date (YYYY-MM-DD)
+        in: query
+        name: endDate
+        type: string
+      responses:
+        "200":
+          description: Expense response
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_helper.BaseHttpResponse'
+            - properties:
+                result:
+                  items:
+                    $ref: '#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_dto.ExpenseResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-expense-tracker-api_api_helper.BaseHttpResponse'
+      security:
+      - AuthBearer: []
+      summary: List Expenses
+      tags:
+      - Expenses
     post:
       consumes:
       - application/json

@@ -12,5 +12,6 @@ func Expense(router *gin.RouterGroup, cfg *config.Config) {
 	router.PUT("/:id", h.UpdateExpense)
 	router.DELETE("/:id", h.DeleteExpense)
 	router.GET("/:id", h.GetExpenseByID)
+	router.GET("/", h.ListExpenses)
 
 }

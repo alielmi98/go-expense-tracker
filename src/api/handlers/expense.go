@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/alielmi98/golang-expense-tracker-api/api/dto"
 	"github.com/alielmi98/golang-expense-tracker-api/api/helper"
@@ -117,6 +118,70 @@ func (h *expenseTrackerHandler) GetExpenseByID(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Params.ByName("id"))
 
 	response, err := h.expenseService.GetExpenseByID(c, id)
+	if err != nil {
+		c.AbortWithStatusJSON(helper.TranslateErrorToStatusCode(err),
+			helper.GenerateBaseResponseWithError(nil, false, helper.InternalError, err))
+		return
+	}
+	c.JSON(http.StatusOK, helper.GenerateBaseResponse(response, true, 0))
+}
+
+// ListExpenses godoc
+// @Summary List Expenses
+// @Description List and filter expenses
+// @Tags Expenses
+// @Accept json
+// @produces json
+// @Param filter query string false "Filter (past_week, past_month, last_3_months)"
+// @Param startDate query string false "Start Date (YYYY-MM-DD)"
+// @Param endDate query string false "End Date (YYYY-MM-DD)"
+// @Success 200 {object} helper.BaseHttpResponse{result=[]dto.ExpenseResponse} "Expense response"
+// @Failure 400 {object} helper.BaseHttpResponse "Bad request"
+// @Router /v1/expense/ [get]
+// @Security AuthBearer
+func (h *expenseTrackerHandler) ListExpenses(c *gin.Context) {
+	filter := c.Query("filter")
+	startDateStr := c.Query("startDate")
+	endDateStr := c.Query("endDate")
+
+	var startDate, endDate time.Time
+	var err error
+
+	switch filter {
+	case "past_week":
+		startDate = time.Now().AddDate(0, 0, -7)
+		endDate = time.Now()
+	case "past_month":
+		startDate = time.Now().AddDate(0, -1, 0)
+		endDate = time.Now()
+	case "last_3_months":
+		startDate = time.Now().AddDate(0, -3, 0)
+		endDate = time.Now()
+	default:
+		if startDateStr != "" {
+			startDate, err = time.Parse("2006-01-02", startDateStr)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusBadRequest,
+					helper.GenerateBaseResponseWithValidationError(nil, false, helper.ValidationError, err))
+				return
+			}
+		} else {
+			startDate = time.Now().AddDate(0, 0, -7) // Default to past week
+		}
+
+		if endDateStr != "" {
+			endDate, err = time.Parse("2006-01-02", endDateStr)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusBadRequest,
+					helper.GenerateBaseResponseWithValidationError(nil, false, helper.ValidationError, err))
+				return
+			}
+		} else {
+			endDate = time.Now()
+		}
+	}
+
+	response, err := h.expenseService.ListExpenses(c, startDate, endDate)
 	if err != nil {
 		c.AbortWithStatusJSON(helper.TranslateErrorToStatusCode(err),
 			helper.GenerateBaseResponseWithError(nil, false, helper.InternalError, err))
