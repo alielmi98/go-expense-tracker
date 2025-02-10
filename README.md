@@ -17,8 +17,8 @@ This project is one of the backend projects listed on the [roadmap.sh](https://r
 
 ### Prerequisites
 
-- Go 1.16 or higher
-- PostgreSQL
+- Docker
+- Docker Compose
 
 ### Installation
 
@@ -29,23 +29,14 @@ This project is one of the backend projects listed on the [roadmap.sh](https://r
     cd go-expense-tracker
     ```
 
-2. Install dependencies:
+2. Build and run the Docker containers:
 
     ```sh
-    go mod tidy
+    docker-compose -f docker/docker-compose.yml up --build
     ```
 
-3. Set up the database:
+3. The backend service will be available at `http://localhost:5000`.
 
-    ```sh
-    # Create a PostgreSQL database and update the connection string in the configuration file
-    ```
-
-4. Run the application:
-
-    ```sh
-    go run main.go
-    ```
 
 ### API Endpoints
 
