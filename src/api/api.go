@@ -38,7 +38,7 @@ func RegisterRoutes(r *gin.Engine, cfg *config.Config) {
 		routers.Token(tokens, cfg)
 
 		// Expense
-		expenses := v1.Group("/expense")
+		expenses := v1.Group("/expense", middlewares.Authentication(cfg))
 		routers.Expense(expenses, cfg)
 
 	}

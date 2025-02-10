@@ -6,6 +6,7 @@ import (
 
 	"github.com/alielmi98/golang-expense-tracker-api/api/dto"
 	"github.com/alielmi98/golang-expense-tracker-api/common"
+	"github.com/alielmi98/golang-expense-tracker-api/constants"
 
 	"github.com/alielmi98/golang-expense-tracker-api/data/models"
 	"github.com/alielmi98/golang-expense-tracker-api/repository"
@@ -30,7 +31,8 @@ func NewExpenseTrackerService() ExpenseTrackerService {
 }
 
 func (s *expenseTrackerService) CreateExpense(ctx context.Context, expense *dto.CreateExpenseRequest) (*dto.ExpenseResponse, error) {
-	userId := uint(1)
+	userId := uint(ctx.Value(constants.UserIdKey).(float64))
+
 	model, err := common.TypeConverter[models.Expense](expense)
 	if err != nil {
 		return &dto.ExpenseResponse{}, err
@@ -91,7 +93,8 @@ func (s *expenseTrackerService) GetExpenseByID(ctx context.Context, id int) (*dt
 }
 
 func (s *expenseTrackerService) ListExpenses(ctx context.Context, startDate, endDate time.Time) ([]dto.ExpenseResponse, error) {
-	models, err := s.repo.ListExpenses(ctx, startDate, endDate)
+	userId := uint(ctx.Value(constants.UserIdKey).(float64))
+	models, err := s.repo.ListExpenses(ctx, userId, startDate, endDate)
 	if err != nil {
 		return nil, err
 	}
